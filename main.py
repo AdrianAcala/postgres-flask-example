@@ -36,5 +36,28 @@ def get_user(user_id):
         return jsonify({"message": "User not found"}), 404
 
 
+@app.route("/users/<int:user_id>", methods=["PUT"])
+def update_user(user_id):
+    user = User.query.filter_by(user_id=user_id).first()
+    if user:
+        data = request.get_json()
+        user.email = data.get("email", user.email)
+        db.session.commit()
+        return jsonify({"message": "User updated successfully"}), 200
+    else:
+        return jsonify({"message": "User not found"}), 404
+
+
+@app.route("/users/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    user = User.query.filter_by(user_id=user_id).first()
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({"message": "User deleted successfully"}), 200
+    else:
+        return jsonify({"message": "User not found"}), 404
+
+
 if __name__ == "__main__":
     app.run(debug=True)
